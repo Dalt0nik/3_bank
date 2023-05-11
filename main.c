@@ -4,7 +4,7 @@
 #include "priorityQueue.h"
 #include "queue.h"
 
-//compile: gcc main.c priorityQueue.c -o main.exe
+//compile: gcc main.c priorityQueue.c queue.c -o main.exe
 
 void process(double pagrindineSuma, double ismokuKiekis, double palukanos, double delspinigiai, double alga, double algosInfliacija, FILE *protokolas);
 void strategija1(double pagrindineSuma, double ismokuKiekis, double palukanos, double delspinigiai, double alga, double algosInfliacija, FILE *protokolas, int *T1, double *sumoketaSuma1);
@@ -20,7 +20,7 @@ int main()
     priorityQueue* test = createQ();
 
     double pagrindineSuma, ismokuKiekis, palukanos, delspinigiai, alga, algosInfliacija;
-    char fileName[20] = "Protokolas.txt";
+    char fileName[20] = "Protokolas4.txt";
 
     FILE *protokolas;
     protokolas = fopen(fileName, "w");
@@ -35,36 +35,47 @@ int main()
 
 
 
-    pagrindineSuma = 50000;
-    ismokuKiekis = 40;
-    palukanos = 3;
-    delspinigiai = 5;
-    alga = 1000;
+    pagrindineSuma = 30000;
+    ismokuKiekis = 60;
+    palukanos = 10;
+    delspinigiai = 3;
+    alga = 2000;
     algosInfliacija = 10;
     
 
 
-    fprintf(protokolas, "Evgenij Shapovalov. PS1, 3 grupe, 4 pogrupis.\n"
+    fprintf(protokolas,
+    "Evgenij Shapovalov. PS1, 3 grupe, 4 pogrupis.\n"
     "ADS 3 uzduotis. 9 variantas: Banko skolu dengimas.\n\n"
-    "Salyga:\nBankas išduoda klientui paskolą, pagal jos sumą ir paskolos laikotarpį sudaromas grąžinimo grafikas (paskolinta suma grąžinama lygiomis dalimis kas 30 dienų).\n"
-    "Deja, ne visi klientai sugeba grąžinti paskolą laiku.\n"
-    "Atėjus mokėjimo dienai klientas gali turėti tik tiek pinigų, kiek reikia einamajai įmokai pagal grafiką dengti,\n"
-    "arba kažkiek daugiau pinigų (tokiu atveju jis dengia ir įsiskolinimus, jei tokių yra),\n"
-    "arba kažkiek mažiau pinigų (tokiu atveju auga skolos).\n"
-    "Palūkanos skaičiuojamos už visą tam momentui negrąžintą paskolos sumą.\n"
-    "Už laiku negrąžintą paskolos dalį imami delspinigiai (delspinigiai neskaičiuojami nuo palūkanų ir delspinigių).\n\n"
-    "Galimos 2 skolu dengimo strategijos.\n"
-    "Strategija 1: dengiamos seniausios skolos, neatsižvelgiant į jų tipą.\n"
-    "Strategija 2: dengiama pagal prioritetus: pagrindinė suma, palūkanos, delspinigiai.\n\n"
-    "Tikslas: įvertinti šių strategijų ekonominį poveikį klientui.\n\n");
+    "Salyga:\nBankas isduoda klientui paskola, pagal jos suma ir paskolos\n"
+    "laikotarpi sudaromas grazinimo grafikas (paskolinta suma grazinama\n"
+    "lygiomis dalimis kas 30 dienu).\n"
+    "Deja, ne visi klientai sugeba grazinti paskola laiku. Atejus mokejimo\n"
+    "dienai klientas gali tureti tik tiek pinigu, kiek reikia einamajai\n"
+    "imokai pagal grafika dengti, arba kazkiek daugiau pinigu (tokiu atveju\n"
+    "jis dengia ir isiskolinimus, jei tokiu yra), arba kazkiek maziau pinigu\n"
+    "(tokiu atveju auga skolos).\n"
+    "Palukanos skaiciuojamos uz visa tam momentui negrazinta paskolos suma.\n"
+    "Uz laiku negrazinta paskolos dali imami delspinigiai (delspinigiai\n"
+    "neskaiciuojami nuo palukanu ir delspinigiu).\n\n"
+    "Galimos dvi skolu dengimo strategijos.\n"
+    "Strategija 1: dengiamos seniausios skolos, neatsizvelgiant i ju tipa.\n"
+    "Strategijos realizacijoje yra naudojama eile.\n\n"
+    "Strategija 2: dengiama pagal prioritetus: pagrindine suma, palukanos,\n"
+    "delspinigiai. Strategijos realizacijoje yra naudojama prioritetine eile.\n\n\n"
+    "Tikslas: ivertinti siu strategiju ekonomini poveiki klientui.\n\n"
+    "Isvada is salygos:\n"
+    "Is salygos yra akivaizdu, kad visais atvejais optimalu yra naudoti\n"
+    "Strategija 2, pagal kuria pradzioje yra apmokamos pagrindines sumos\n"
+    "skolos, kadangi butent nuo ju yra skaiciuojamos papildomos skolos.\n\n");
 
     fprintf(protokolas,"Dalis I. Ivesti rodikliai:\n"
-    "1) Pagrindine suma: %5.0f Eur.\n"
-    "2) Ismoku kiekis:   %5.0f\n"
-    "3) Palukanos:       %5.0f %%\n"
-    "4) Delspinigiai:    %5.0f %%\n"
-    "6) Alga:            %5.0f Eur.\n"
-    "7) Algos infliacija:%5.0f %%\n\n"
+    "1) Pagrindine suma:         %8.0f Eur.\n"
+    "2) Ismoku kiekis:           %8.0f ismoku.\n"
+    "3) Palukanos:               %8.0f %%\n"
+    "4) Delspinigiai:            %8.0f %%\n"
+    "6) Alga:                    %8.0f Eur.\n"
+    "7) Algos kasmetinis augimas:%8.0f %%\n\n"
     "DALIS II. Protokolas\n",pagrindineSuma, ismokuKiekis,palukanos,delspinigiai,alga,algosInfliacija);
 
     process(pagrindineSuma,ismokuKiekis,palukanos,delspinigiai,alga,algosInfliacija, protokolas);
@@ -81,19 +92,27 @@ void process(double pagrindineSuma, double ismokuKiekis, double palukanos, doubl
     strategija1(pagrindineSuma, ismokuKiekis, palukanos, delspinigiai, alga, algosInfliacija, protokolas, &T1, &sumoketaSuma1);
     strategija2(pagrindineSuma, ismokuKiekis, palukanos, delspinigiai, alga, algosInfliacija, protokolas, &T2, &sumoketaSuma2);
 
-        fprintf(protokolas,"\n\nDALIS III. Rezultatai\n\nPradine skolos suma:  %.2f\n\nStrategija 1:\n1)Viso sumoketa pinigu: %.2f\n2)Viso ismoku T:        %d\n\nStrategija 2:\n1)Viso sumoketa pinigu: %.2f\n2)Viso ismoku T:        %d\n", pagrindineSuma, sumoketaSuma1, T1-1, sumoketaSuma2, T2-1);
+    fprintf(protokolas,"\n\nDALIS III. Rezultatai\n\nPradine skolos suma:  %.2f Eur.\n\nStrategija 1:\n1)Viso sumoketa pinigu: %10.2f Eur.\n2)Viso ismoku T:        %10d ismoku.\n\nStrategija 2:\n1)Viso sumoketa pinigu: %10.2f Eur.\n2)Viso ismoku T:        %10d ismoku.\n\n", pagrindineSuma, sumoketaSuma1, T1-1, sumoketaSuma2, T2-1);
+    
+    fprintf(protokolas, "Isvada:\n");
+    if(sumoketaSuma1 > sumoketaSuma2)
+        fprintf(protokolas, "Su ivestais rodikliais, naudodamasis Strategija 2, klientas uzmoka %.2f Eur maziau.", sumoketaSuma1-sumoketaSuma2);
+    else if(sumoketaSuma2 > sumoketaSuma1)
+        fprintf(protokolas, "Su ivestais rodikliais, naudodamasis Strategija 1, klientas uzmoka %.2f Eur maziau.", sumoketaSuma2-sumoketaSuma1);
+    else
+        fprintf(protokolas, "Su ivestais rodikliais Strategija 1 ir Strategija 2 veikia vienodai.");
 
 }
 
 void strategija1(double pagrindineSuma, double ismokuKiekis, double palukanos, double delspinigiai, double alga, double algosInfliacija, FILE *protokolas, int *T1, double *sumoketaSuma1)
 {
-    char tipai[4][20] = {"", "delspinigiai", "palukanos", "pagrindines ismokos"};
+    char tipai[4][25] = {"", "delspinigiai", "palukanos", "pagrindines ismokos"};
     int ismoka = 0;
     double pradineSuma = pagrindineSuma, bendraSkola = pagrindineSuma, skolaPagrindine = pagrindineSuma, skolaPalukanos = 0, skolaDelspinigiai = 0, klientoPinigai = 0;
     *sumoketaSuma1 = 0;
     Queue* skolos = create();
 
-    fprintf(protokolas, "\nStrategija 1.\n");
+    fprintf(protokolas, "\nSTRATEGIJA 1.\n");
 
     while(bendraSkola > 0 || isempty(skolos) != 1)
     {
@@ -115,24 +134,24 @@ void strategija1(double pagrindineSuma, double ismokuKiekis, double palukanos, d
         if(skolaPagrindine > 0)
             fprintf(protokolas, "  Pagrindine ismoka:       %10.2f Eur.\n", skolaPagrindine);
         else
-            fprintf(protokolas, "  Nera naujos pagrindiniu ismoku skolos\n");
+            fprintf(protokolas, "  Nera naujos pagrindiniu ismoku skolos.\n");
         if(skolaPalukanos > 0)
             fprintf(protokolas, "  Nauja palukanu skola:    %10.2f Eur.\n", skolaPalukanos);
         else
-            fprintf(protokolas, "  Nera naujos palukanu skolos\n");
+            fprintf(protokolas, "  Nera naujos palukanu skolos.\n");
         if(skolaDelspinigiai > 0)
             fprintf(protokolas, "  Nauja delspinigiu skola: %10.2f Eur.\n\n", skolaDelspinigiai);
         else
-            fprintf(protokolas, "  Nera naujos delspinigiu skolos\n\n");
+            fprintf(protokolas, "  Nera naujos delspinigiu skolos.\n\n");
 
 
         klientoPinigai += alga;
         fprintf(protokolas, "  Kliento pinigu kiekis:   %10.2f Eur.\n\n", klientoPinigai);
 
         if(klientoPinigai > 0)
-            fprintf(protokolas, "  Klientas sugebejo apmoketi sekancias skolas:\n");
+            fprintf(protokolas, "  Klientas sugebejo apmoketi sias skolas:\n");
         else
-            fprintf(protokolas, "  Klientas nesumokejo jokiu skolu\n");
+            fprintf(protokolas, "  Klientas neapmokejo jokiu skolu\n");
 
 
 
@@ -144,14 +163,14 @@ void strategija1(double pagrindineSuma, double ismokuKiekis, double palukanos, d
             if(klientoPinigai >= virsutineSkola)
             {
                 dequeue(skolos, &virsutineSkola, &virsutinisTipas);
-                fprintf(protokolas, "  Suma: %8.2f Eur, tipas: %s.\n", virsutineSkola, tipai[virsutinisTipas]);
+                fprintf(protokolas, "  Suma %8.2f Eur, tipas - %s.\n", virsutineSkola, tipai[virsutinisTipas]);
                 klientoPinigai -= virsutineSkola;
                 *sumoketaSuma1 += virsutineSkola;
             }
             else
             {
                 dequeue(skolos, &virsutineSkola, &virsutinisTipas);
-                fprintf(protokolas, "  Suma: %8.2f Eur, tipas: %s.\n", klientoPinigai, tipai[virsutinisTipas]);
+                fprintf(protokolas, "  Suma %8.2f Eur, tipas - %s.\n", klientoPinigai, tipai[virsutinisTipas]);
 
                 enqueue(skolos, virsutineSkola-klientoPinigai, virsutinisTipas);
                 *sumoketaSuma1 += klientoPinigai;
@@ -163,7 +182,7 @@ void strategija1(double pagrindineSuma, double ismokuKiekis, double palukanos, d
         fprintf(protokolas, "\n  Likusios skolos:\n");
         likoSkoluQ(skolos, protokolas);
 
-        fprintf(protokolas, "  Likusi pagrindine skola:       %8.2f Eur.\n\n", bendraSkola);
+        fprintf(protokolas, "  Likusi pagrindine skola:            %10.2f Eur.\n\n", bendraSkola);
 
         skolaPagrindine = 0;
         skolaPalukanos = 0;
@@ -180,13 +199,13 @@ void strategija1(double pagrindineSuma, double ismokuKiekis, double palukanos, d
 
 void strategija2(double pagrindineSuma, double ismokuKiekis, double palukanos, double delspinigiai, double alga, double algosInfliacija, FILE *protokolas, int *T2, double *sumoketaSuma2)
 {
-    char tipai[4][20] = {"", "delspinigiai", "palukanos", "pagrindines ismokos"};
+    char tipai[4][25] = {"", "delspinigiai", "palukanos", "pagrindines ismokos"};
     int ismoka = 0;
     double pradineSuma = pagrindineSuma, bendraSkola = pagrindineSuma, skolaPagrindine = pagrindineSuma, skolaPalukanos = 0, skolaDelspinigiai = 0, klientoPinigai = 0;
     *sumoketaSuma2 = 0;
     priorityQueue* skolos = createQ(); //3 -> 2 -> 1
 
-    fprintf(protokolas, "\n\nStrategija 2.\n");
+    fprintf(protokolas, "\nSTRATEGIJA 2.\n");
 
     while(bendraSkola > 0 || isEmpty(skolos) != 1)
     {
@@ -208,15 +227,15 @@ void strategija2(double pagrindineSuma, double ismokuKiekis, double palukanos, d
         if(skolaPagrindine > 0)
             fprintf(protokolas, "  Pagrindine ismoka:       %10.2f Eur.\n", skolaPagrindine);
         else
-            fprintf(protokolas, "  Nera naujos pagrindiniu ismoku skolos\n");
+            fprintf(protokolas, "  Nera naujos pagrindiniu ismoku skolos.\n");
         if(skolaPalukanos > 0)
             fprintf(protokolas, "  Nauja palukanu skola:    %10.2f Eur.\n", skolaPalukanos);
         else
-            fprintf(protokolas, "  Nera naujos palukanu skolos\n");
+            fprintf(protokolas, "  Nera naujos palukanu skolos.\n");
         if(skolaDelspinigiai > 0)
             fprintf(protokolas, "  Nauja delspinigiu skola: %10.2f Eur.\n\n", skolaDelspinigiai);
         else
-            fprintf(protokolas, "  Nera naujos delspinigiu skolos\n\n");
+            fprintf(protokolas, "  Nera naujos delspinigiu skolos.\n\n");
 
         //fprintf(protokolas, "  Naujos skolos:\n  Pagrindine ismoka:       %10.2f\n  Nauja palukanu skola:    %10.2f\n  Nauja delspinigiu skola: %10.2f\n\n",skolaPagrindine,skolaPalukanos,skolaDelspinigiai);    
 
@@ -224,9 +243,9 @@ void strategija2(double pagrindineSuma, double ismokuKiekis, double palukanos, d
         fprintf(protokolas, "  Kliento pinigu kiekis:   %10.2f Eur.\n\n", klientoPinigai);
 
         if(klientoPinigai > 0)
-            fprintf(protokolas, "  Klientas sugebejo apmoketi sekancias skolas:\n");
+            fprintf(protokolas, "  Klientas sugebejo apmoketi sias skolas:\n");
         else
-            fprintf(protokolas, "  Klientas nesumokejo jokiu skolu\n");
+            fprintf(protokolas, "  Klientas neapmokejo jokiu skolu\n");
 
         while(klientoPinigai > 0 && isEmpty(skolos) != 1)
         {          
@@ -236,14 +255,14 @@ void strategija2(double pagrindineSuma, double ismokuKiekis, double palukanos, d
             if(klientoPinigai >= virsutineSkola)
             {
                 pop(skolos, &virsutineSkola);
-                fprintf(protokolas, "  Suma: %8.2f Eur, tipas: %s.\n", virsutineSkola, tipai[virsutinisPrioritetas]);
+                fprintf(protokolas, "  Suma %8.2f Eur, tipas - %s.\n", virsutineSkola, tipai[virsutinisPrioritetas]);
                 klientoPinigai -= virsutineSkola;
                 *sumoketaSuma2 += virsutineSkola;
             }
             else
             {
                 pop(skolos, &virsutineSkola);
-                fprintf(protokolas, "  Suma: %8.2f Eur, tipas: %s.\n", klientoPinigai, tipai[virsutinisPrioritetas]);
+                fprintf(protokolas, "  Suma %8.2f Eur, tipas - %s.\n", klientoPinigai, tipai[virsutinisPrioritetas]);
 
                 insert(skolos, virsutineSkola-klientoPinigai, virsutinisPrioritetas);
                 *sumoketaSuma2 += klientoPinigai;
@@ -254,7 +273,7 @@ void strategija2(double pagrindineSuma, double ismokuKiekis, double palukanos, d
         fprintf(protokolas, "\n  Likusios skolos:\n");
         likoSkoluPr(skolos, protokolas);
 
-        fprintf(protokolas, "  Likusi pagrindine skola:       %8.2f Eur.\n\n", bendraSkola);
+        fprintf(protokolas, "  Likusi pagrindine skola:             %10.2f Eur.\n\n", bendraSkola);
 
         skolaPagrindine = 0;
         skolaPalukanos = 0;
@@ -326,7 +345,7 @@ void likoSkoluPr(priorityQueue* skolos, FILE *protokolas)
         current = current->next;
     }
 
-    fprintf(protokolas, "  1) Pagrindiniu ismoku skolu suma: %8.2f Eur.\n  2) Palukanu skolu suma:           %8.2f Eur.\n  3) Delspinigiu skolu suma:        %8.2f Eur.\n\n", sumPagrindine, sumPalukanos, sumDelspinigiai);
+    fprintf(protokolas, "  1) Pagrindiniu ismoku skolu suma:    %10.2f Eur.\n  2) Palukanu skolu suma:              %10.2f Eur.\n  3) Delspinigiu skolu suma:           %10.2f Eur.\n\n", sumPagrindine, sumPalukanos, sumDelspinigiai);
 }
 
 void likoSkoluQ(Queue* skolos, FILE *protokolas)
@@ -349,5 +368,5 @@ void likoSkoluQ(Queue* skolos, FILE *protokolas)
         }
     }
 
-    fprintf(protokolas, "  1) Pagrindiniu ismoku skolu suma: %8.2f Eur.\n  2) Palukanu skolu suma:           %8.2f Eur.\n  3) Delspinigiu skolu suma:        %8.2f Eur.\n\n", sumPagrindine, sumPalukanos, sumDelspinigiai);
+    fprintf(protokolas, "  1) Pagrindiniu ismoku skolu suma:   %10.2f Eur.\n  2) Palukanu skolu suma:             %10.2f Eur.\n  3) Delspinigiu skolu suma:          %10.2f Eur.\n\n", sumPagrindine, sumPalukanos, sumDelspinigiai);
 }
